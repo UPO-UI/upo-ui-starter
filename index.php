@@ -1,3 +1,16 @@
+<?php
+// upo-ui-starter/index.php - PHP version of frontend entry point with optional migration trigger
+
+// Dev-only: Run migrations if ?migrate=1 is set (e.g., visit /?migrate=1)
+if (isset($_GET['migrate']) && $_GET['migrate'] === '1') {
+    require_once __DIR__ . '/api/database/connection.php'; // Loads env and PDO
+    require_once __DIR__ . '/api/core/Migrator.php'; // Loads the Migrator class
+    Migrator::run();
+    echo '<p style="color: green;">Migrations completed! Refresh without ?migrate=1 to load the app.</p>';
+    exit; // Stop here after running migrations
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -22,4 +35,4 @@
         <!-- Load UPO App -->
         <script type="module" src="/src/main.js"></script>
     </body>
-</html>
+</html> 
