@@ -34,7 +34,7 @@ class Header extends App {
 
           <!-- Logo + Brand Name -->
           <ui-link href="/" class="flex items-center gap-2 no-underline hover:opacity-90 transition-opacity">
-            <img class="size-10 rounded-lg shadow-sm" src="/src/assets/logo.png" alt="UPO UI Logo" />
+            <img class="size-10 rounded-full shadow-sm" src="/src/assets/logo.png" alt="UPO UI Logo" />
             <div class="flex flex-col leading-tight">
               <span class="text-xl font-extrabold text-gray-800 tracking-tight">UPO UI</span>
               <span class="text-xs text-gray-500 font-semibold tracking-wide">Version 1.0.0</span>
@@ -45,7 +45,7 @@ class Header extends App {
           <nav class="flex items-center space-x-4">
             <!-- Docs Link -->
             <ui-link
-              href="/docs"
+              href="https://github.com/upovibe/upoUI"
               class="text-gray-700 hover:text-blue-600 font-medium transition-colors no-underline flex items-center space-x-2 p-2 rounded-md hover:bg-white/50"
             >
               <i class="fas fa-cubes text-xl"></i>

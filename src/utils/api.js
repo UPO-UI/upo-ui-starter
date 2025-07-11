@@ -11,7 +11,7 @@
  * - Centralized error handling (can be expanded later).
  */
 
-const API_BASE_URL = 'http://localhost/api'; // <-- IMPORTANT: Change this to your actual API URL
+const API_BASE_URL = '/api'; // Use relative path for flexibility in different environments
 
 // Create a pre-configured instance of axios
 const apiClient = axios.create({

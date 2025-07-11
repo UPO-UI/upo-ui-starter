@@ -2,7 +2,7 @@
 // api/database/connection.php - Reusable DB connection
 
 require_once __DIR__ . '/../config/load_env.php'; // Load env helper
-$env = loadEnv(__DIR__ . '/../../.env'); // Path to project root .env
+$env = loadEnv(__DIR__ . '/../../../.env'); // Path to .env outside web root (parent of project root)
 
 $host = $env['DB_HOST'] ?? 'localhost';
 $db = $env['DB_NAME'] ?? 'upoui_db';

@@ -1,6 +1,3 @@
-# Root .htaccess - Protects sensitive files project-wide
-
-# Enable rewrite engine (for any URL handling if needed)
 RewriteEngine On
 
 # Protect .env from all access
@@ -9,7 +6,17 @@ RewriteEngine On
     Deny from all
 </Files>
 
-# Optional: Disable directory listings (hides file lists if no index file)
+# Disable directory listings
 Options -Indexes
 
-# You can add more rules here (e.g., for API routing if needed outside api/) 
+# Allow direct access to existing files and directories (like JS, CSS, images)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route API requests to the api directory (assuming api has its own .htaccess)
+RewriteCond %{REQUEST_URI} ^/api
+RewriteRule ^ - [L]
+
+# Rewrite all other requests to index.html for client-side routing
+RewriteRule ^ /index.html [L] 
