@@ -1,0 +1,15 @@
+# Root .htaccess - Protects sensitive files project-wide
+
+# Enable rewrite engine (for any URL handling if needed)
+RewriteEngine On
+
+# Protect .env from all access
+<Files ".env">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Optional: Disable directory listings (hides file lists if no index file)
+Options -Indexes
+
+# You can add more rules here (e.g., for API routing if needed outside api/) 
