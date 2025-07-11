@@ -9,4 +9,5 @@ require_once __DIR__ . '/../core/Router.php';
 
 // Add your routes below...
 Router::get('/users', 'UserController@index');
+Router::post('/users', 'UserController@store');
 ?> 
