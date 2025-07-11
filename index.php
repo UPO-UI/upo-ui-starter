@@ -1,32 +1,13 @@
 <?php
-// upo-ui-starter/index.php - Single root entry point for both API and frontend
+// upo-ui-starter/index.php - Frontend entry with integrated migration trigger
 
-// Load shared dependencies
-require_once __DIR__ . '/api/database/connection.php'; // Loads env and PDO
-require_once __DIR__ . '/api/core/Router.php'; // Loads the Router class
-require_once __DIR__ . '/api/routes/routes.php'; // Loads defined routes
-
-$uri = trim(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '/');
-$method = $_SERVER['REQUEST_METHOD'];
-header('Content-Type: application/json'); // Default for API
-
-// Dev-only: Run migrations if ?migrate=1 is set (e.g., visit /?migrate=1)
-if (isset($_GET['migrate']) && $_GET['migrate'] === '1') {
-    require_once __DIR__ . '/api/core/Migrator.php'; // Loads the Migrator class
+// Check if CLI mode and --migrate argument is provided
+if (php_sapi_name() === 'cli' && isset($argv[1]) && $argv[1] === '--migrate') {
+    require_once __DIR__ . '/api/database/connection.php';
+    require_once __DIR__ . '/api/core/Migrator.php';
     Migrator::run();
-    echo '<p style="color: green;">Migrations completed! Refresh without ?migrate=1 to load the app.</p>';
-    exit; // Stop here after running migrations
+    exit();
 }
-
-// Handle API requests if path starts with 'api/'
-if (strpos($uri, 'api/') === 0) {
-    $path = substr($uri, 4); // Remove 'api/' prefix
-    Router::dispatch($path, $method, $pdo);
-    exit; // Stop after API response
-}
-
-// Otherwise, render the frontend (set HTML content type)
-header('Content-Type: text/html; charset=UTF-8');
 ?>
 
 <!DOCTYPE html>

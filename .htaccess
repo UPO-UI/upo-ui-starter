@@ -1,22 +1,11 @@
+# upo-ui-starter/.htaccess - Root-level config for shared hosting
+
+Options -Indexes  # Prevent directory listing
+
 RewriteEngine On
 
-# Protect .env from all access
-<Files ".env">
-    Order allow,deny
-    Deny from all
-</Files>
+# Rewrite all /api/* requests to api/public/index.php
+RewriteRule ^api/(.*)$ api/public/index.php [L]
 
-# Disable directory listings
-Options -Indexes
-
-# Allow direct access to existing files and directories (like JS, CSS, images)
-RewriteCond %{REQUEST_FILENAME} -f [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^ - [L]
-
-# Route API requests to the api directory (assuming api has its own .htaccess)
-RewriteCond %{REQUEST_URI} ^/api
-RewriteRule ^ - [L]
-
-# Rewrite all other requests to index.html for client-side routing
-RewriteRule ^ /index.html [L] 
+# If you have index.html instead of index.php, add:
+# DirectoryIndex index.html index.php 
