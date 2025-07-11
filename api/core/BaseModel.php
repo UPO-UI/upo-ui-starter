@@ -1,13 +1,13 @@
 <?php
-// api/models/BaseModel.php - Base class for all database models
+// api/core/BaseModel.php - Base class for all database models
 
 class BaseModel {
     protected $pdo;
-    protected $table;
+    protected static $table = '';
 
-    public function __construct($pdo, $table) {
+    public function __construct($pdo) {
         $this->pdo = $pdo;
-        $this->table = $table;
+        $this->table = static::$table;
     }
 
     public function findAll() {
@@ -83,7 +83,7 @@ class BaseModel {
             throw new Exception('No schema defined for ' . static::class);
         }
 
-        $table = (new static($pdo, ''))->table; // Get table name from instance
+        $table = static::$table;
         $fields = [];
         foreach ($schema as $field => $definition) {
             $fields[] = "$field $definition";

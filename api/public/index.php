@@ -10,5 +10,5 @@ $method = $_SERVER['REQUEST_METHOD'];
 header('Content-Type: application/json');
 
 // Dispatch the request using the router
-Router::dispatch($path, $method);
+Router::dispatch($path, $method, $pdo);
 ?> 

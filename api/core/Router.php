@@ -18,13 +18,13 @@ class Router {
 
     // Add more methods as needed (put, delete, etc.)
 
-    public static function dispatch($uri, $method) {
+    public static function dispatch($uri, $method, $pdo) {
         $method = strtoupper($method);
         foreach (self::$routes as $route) {
             if ($route['method'] === $method && $route['path'] === $uri) {
                 list($controller, $action) = explode('@', $route['action']);
                 require_once __DIR__ . '/../controllers/' . $controller . '.php';
-                $controllerInstance = new $controller();
+                $controllerInstance = new $controller($pdo);
                 return $controllerInstance->$action();
             }
         }

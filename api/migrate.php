@@ -6,9 +6,10 @@ require_once __DIR__ . '/database/connection.php'; // Loads env and PDO
 // Step 1: Create a migrations tracking table if it doesn't exist
 try {
     $pdo->exec("CREATE TABLE IF NOT EXISTS migrations (id INT AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) UNIQUE, executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)");
-    echo "Migrations tracking table ready.\n";
+    logMigration('Migrations tracking table ready.');
 } catch (PDOException $e) {
-    die("Error setting up migrations table: " . $e->getMessage());
+    logMigration('Error setting up migrations table: ' . $e->getMessage());
+    die();
 }
 
 function logMigration($message) {
@@ -36,7 +37,7 @@ foreach ($models as $modelFile) {
     $stmt = $pdo->prepare("SELECT * FROM migrations WHERE migration = ?");
     $stmt->execute([$migrationName]);
     if ($stmt->fetch()) {
-        echo "Skipping already migrated: $modelClass\n";
+        logMigration("Skipping already migrated: $modelClass");
         continue;
     }
 
@@ -45,9 +46,9 @@ foreach ($models as $modelFile) {
         // Track as executed
         $trackStmt = $pdo->prepare("INSERT INTO migrations (migration) VALUES (?)");
         $trackStmt->execute([$migrationName]);
-        echo "Model migration completed: $modelClass\n";
+        logMigration("Model migration completed: $modelClass");
     } catch (Exception $e) {
-        echo "Error migrating $modelClass: " . $e->getMessage() . "\n";
+        logMigration("Error migrating $modelClass: " . $e->getMessage());
     }
 }
 
@@ -55,7 +56,7 @@ foreach ($models as $modelFile) {
 $migrationDir = __DIR__ . '/database/migrations/';
 $files = glob($migrationDir . '*.sql');
 if (empty($files)) {
-    echo "No additional SQL migration files found.\n";
+    logMigration('No additional SQL migration files found.');
 } else {
     foreach ($files as $file) {
         $migrationName = basename($file);
@@ -63,7 +64,7 @@ if (empty($files)) {
         $stmt = $pdo->prepare("SELECT * FROM migrations WHERE migration = ?");
         $stmt->execute([$migrationName]);
         if ($stmt->fetch()) {
-            echo "Skipping already migrated SQL: $migrationName\n";
+            logMigration("Skipping already migrated SQL: $migrationName");
             continue;
         }
 
@@ -73,12 +74,12 @@ if (empty($files)) {
             // Track as executed
             $trackStmt = $pdo->prepare("INSERT INTO migrations (migration) VALUES (?)");
             $trackStmt->execute([$migrationName]);
-            echo "Successfully ran SQL migration: $migrationName\n";
+            logMigration("Successfully ran SQL migration: $migrationName");
         } catch (PDOException $e) {
-            echo "Error running $migrationName: " . $e->getMessage() . "\n";
+            logMigration("Error running $migrationName: " . $e->getMessage());
         }
     }
 }
 
-echo "All migrations completed.\n";
+logMigration('All migrations completed.');
 ?> 
