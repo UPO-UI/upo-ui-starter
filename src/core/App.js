@@ -105,7 +105,14 @@ class App extends HTMLElement {
         if (!alreadyLoaded) {
             const script = document.createElement('script');
             script.type = 'module';
-            script.src = bundleSrc;  // Relative path from index.html
+            // Add cache-busting parameter
+            script.src = bundleSrc + '?v=' + Date.now();  // Relative path from index.html
+            
+            // Add error handling for missing components
+            script.onerror = () => {
+                console.warn('UPO UI bundle could not be loaded, continuing without UI components');
+            };
+            
             document.head.appendChild(script);
         }
         
