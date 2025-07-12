@@ -1,6 +1,14 @@
 <?php
 // api/index.php - API entry point
 
+// Check if CLI mode and --migrate argument is provided
+if (php_sapi_name() === 'cli' && isset($argv[1]) && $argv[1] === '--migrate') {
+    require_once __DIR__ . '/database/connection.php';
+    require_once __DIR__ . '/core/Migrator.php';
+    Migrator::run();
+    exit();
+}
+
 require_once __DIR__ . '/database/connection.php';
 require_once __DIR__ . '/core/Router.php';
 require_once __DIR__ . '/core/CorsHandler.php';

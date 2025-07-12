@@ -1,13 +1,5 @@
 <?php
-// upo-ui-starter/index.php - Frontend entry with integrated migration trigger
-
-// Check if CLI mode and --migrate argument is provided
-if (php_sapi_name() === 'cli' && isset($argv[1]) && $argv[1] === '--migrate') {
-    require_once __DIR__ . '/api/database/connection.php';
-    require_once __DIR__ . '/api/core/Migrator.php';
-    Migrator::run();
-    exit();
-}
+// upo-ui-starter/index.php - Frontend entry point
 ?>
 
 <!DOCTYPE html>
