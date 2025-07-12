@@ -12,28 +12,40 @@ class UserController {
 
     public function index() {
         try {
+            // Ensure clean output
+            ob_clean();
+            
             $users = $this->userModel->findAll();
-            echo json_encode($users);
+            echo json_encode($users, JSON_PRETTY_PRINT);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode(['error' => $e->getMessage()], JSON_PRETTY_PRINT);
         }
     }
 
     public function store() {
-        $data = json_decode(file_get_contents('php://input'), true);
-        if (!isset($data['name']) || !isset($data['email'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Name and email are required']);
-            return;
-        }
         try {
+            // Ensure clean output
+            ob_clean();
+            
+            $data = json_decode(file_get_contents('php://input'), true);
+            if (!isset($data['name']) || !isset($data['email'])) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Name and email are required'], JSON_PRETTY_PRINT);
+                return;
+            }
+            
+            // Hash password if provided
+            if (isset($data['password'])) {
+                $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            }
+            
             $id = $this->userModel->create($data);
             http_response_code(201);
-            echo json_encode(['id' => $id, 'message' => 'User created']);
+            echo json_encode(['id' => $id, 'message' => 'User created'], JSON_PRETTY_PRINT);
         } catch (Exception $e) {
             http_response_code(500);
-            echo json_encode(['error' => $e->getMessage()]);
+            echo json_encode(['error' => $e->getMessage()], JSON_PRETTY_PRINT);
         }
     }
 
