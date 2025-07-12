@@ -695,6 +695,7 @@ class Dropdown extends HTMLElement {
 
 // Register the component
 customElements.define('ui-dropdown', Dropdown);
+export default Dropdown;
 
 /**
  * Dropdown Option Component

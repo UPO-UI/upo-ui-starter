@@ -384,4 +384,6 @@ if (typeof window !== 'undefined') {
 // Export for module usage
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Toast;
-} 
+}
+
+export default Toast; 

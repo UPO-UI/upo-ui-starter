@@ -494,4 +494,5 @@ class FileUpload extends HTMLElement {
   }
 }
 
-customElements.define('ui-file-upload', FileUpload); 
+customElements.define('ui-file-upload', FileUpload);
+export default FileUpload;
