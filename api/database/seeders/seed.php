@@ -1,7 +1,7 @@
 <?php
-// api/database/seeders/20241001_150000_users_seeder.php - Users seeder
+// api/database/seeders/seed.php - Main seed file (Express/Node.js style)
 
-class Seeder_20241001_150000_users_seeder {
+class Seed {
     private $pdo;
     
     public function __construct($pdo) {
@@ -9,12 +9,22 @@ class Seeder_20241001_150000_users_seeder {
     }
     
     public function run() {
-        // Sample user data
+        echo "🌱 Starting database seeding...\n\n";
+        
+        $this->seedUsers();
+        
+        echo "\n✅ Database seeding completed!\n";
+    }
+    
+    private function seedUsers() {
+        echo "📝 Seeding users...\n";
+        
         $users = [
             [
                 'name' => 'John Doe',
-                'email' => 'john@example.com',
+                'email' => 'johns@example.com',
                 'phone' => '+1234567890',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
@@ -22,6 +32,7 @@ class Seeder_20241001_150000_users_seeder {
                 'name' => 'Jane Smith',
                 'email' => 'jane@example.com',
                 'phone' => '+1234567891',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ],
@@ -29,14 +40,15 @@ class Seeder_20241001_150000_users_seeder {
                 'name' => 'Bob Johnson',
                 'email' => 'bob@example.com',
                 'phone' => '+1234567892',
+                'password' => password_hash('password123', PASSWORD_DEFAULT),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             ]
         ];
         
         $stmt = $this->pdo->prepare('
-            INSERT INTO users (name, email, phone, created_at, updated_at) 
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO users (name, email, phone, password, created_at, updated_at) 
+            VALUES (?, ?, ?, ?, ?, ?)
         ');
         
         foreach ($users as $user) {
@@ -44,12 +56,13 @@ class Seeder_20241001_150000_users_seeder {
                 $user['name'],
                 $user['email'],
                 $user['phone'],
+                $user['password'],
                 $user['created_at'],
                 $user['updated_at']
             ]);
         }
         
-        echo "Seeded " . count($users) . " users\n";
+        echo "✅ Seeded " . count($users) . " users\n";
     }
 }
 ?> 
