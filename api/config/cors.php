@@ -12,12 +12,6 @@ return [
     // Allowed origins (domains that can access the API)
     'allowed_origins' => [
         $clientUrl,
-        'http://localhost:3000',
-        'http://127.0.0.1:8000',
-        'http://127.0.0.1:3000',
-        // Add your production domains here
-        // 'https://yourdomain.com',
-        // 'https://app.yourdomain.com',
     ],
     
     // Allowed HTTP methods
