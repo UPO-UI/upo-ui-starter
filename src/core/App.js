@@ -94,10 +94,10 @@ class App extends HTMLElement {
      */
     connectedCallback() {
         // Load UPO UI components bundle if not already loaded
-        const bundleSrc = 'src/components/ui/bundle.js';
+        const bundleSrc = '/src/components/ui/bundle.js';
         let alreadyLoaded = false;
         document.querySelectorAll('script').forEach(s => {
-            if (s.src.endsWith(bundleSrc)) {
+            if (s.src.includes(bundleSrc)) {
                 alreadyLoaded = true;
             }
         });
@@ -106,7 +106,7 @@ class App extends HTMLElement {
             const script = document.createElement('script');
             script.type = 'module';
             // Add cache-busting parameter
-            script.src = bundleSrc + '?v=' + Date.now();  // Relative path from index.html
+            script.src = bundleSrc + '?v=' + Date.now();  // Absolute path from root
             
             // Add error handling for missing components
             script.onerror = () => {

@@ -347,7 +347,7 @@ class Button extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['variant', 'color', 'size', 'disabled', 'loading'];
+        return ['variant', 'color', 'size', 'disabled', 'loading', 'class'];
     }
 
     get variant() {
@@ -376,11 +376,9 @@ class Button extends HTMLElement {
         if (this.initialized) return;
         this.initialized = true;
         
-        // Store original content before building the button
-        const originalContent = Array.from(this.childNodes)
-            .filter(node => node !== this.buttonElement)
-            .map(node => node.textContent || '')
-            .join('').trim();
+        // Store original HTML content before building the button
+        const originalNodes = Array.from(this.childNodes)
+            .filter(node => node !== this.buttonElement);
 
         // Move any existing children (except our buttonElement) to avoid duplication
         const children = Array.from(this.childNodes);
@@ -393,8 +391,14 @@ class Button extends HTMLElement {
         // Set up the button element
         this.updateClasses();
         
-        // Set the text content from the original content
-        this.buttonElement.textContent = originalContent || 'Button';
+        // Move the original HTML content to the button element (preserves icons)
+        if (originalNodes.length > 0) {
+            originalNodes.forEach(node => {
+                this.buttonElement.appendChild(node.cloneNode(true));
+            });
+        } else {
+            this.buttonElement.textContent = 'Button';
+        }
         
         // Set disabled state
         if (this.disabled) {
@@ -410,6 +414,7 @@ class Button extends HTMLElement {
             case 'variant':
             case 'color':
             case 'size':
+            case 'class':
                 this.updateClasses();
                 break;
             case 'disabled':
@@ -422,17 +427,21 @@ class Button extends HTMLElement {
     }
 
     updateClasses() {
-        const classes = [
+        const baseClasses = [
             'upo-button',
             `upo-button-${this.size}`,
             `upo-button-${this.variant}-${this.color}`
         ];
         
         if (this.loading) {
-            classes.push('upo-button-loading');
+            baseClasses.push('upo-button-loading');
         }
         
-        this.buttonElement.className = classes.join(' ');
+        // Get custom classes from the component itself
+        const customClasses = Array.from(this.classList);
+        
+        // Apply base classes first, then custom classes (custom classes will override)
+        this.buttonElement.className = baseClasses.join(' ') + ' ' + customClasses.join(' ');
     }
     
     // Forward common methods to the internal button
