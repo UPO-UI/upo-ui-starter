@@ -6,7 +6,7 @@
  * 
  * Attributes:
  * - variant: 'success' | 'error' | 'warning' | 'info' | 'default'
- * - position: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
+ * - position: 'top-right' | 'top-left' | 'top' | 'bottom-right' | 'bottom-left' | 'bottom'
  * - duration: number (milliseconds, 0 = no auto-hide)
  * - message: string
  * - title: string (optional)
@@ -58,6 +58,16 @@ class Toast extends HTMLElement {
         transform: translateY(0) scale(1);
       }
 
+      :host([visible][position="top"]) {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%) scale(1);
+      }
+
+      :host([visible][position="bottom"]) {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%) scale(1);
+      }
+
       :host([position="top-right"]) {
         top: 20px;
         right: 20px;
@@ -66,6 +76,12 @@ class Toast extends HTMLElement {
       :host([position="top-left"]) {
         top: 20px;
         left: 20px;
+      }
+
+      :host([position="top"]) {
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
       }
 
       :host([position="bottom-right"]) {
@@ -78,32 +94,17 @@ class Toast extends HTMLElement {
         left: 20px;
       }
 
+      :host([position="bottom"]) {
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
       .toast {
         background: white;
         border-radius: 8px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        border-left: 4px solid;
         overflow: hidden;
-      }
-
-      .toast[variant="success"] {
-        border-left-color: #10b981;
-      }
-
-      .toast[variant="error"] {
-        border-left-color: #ef4444;
-      }
-
-      .toast[variant="warning"] {
-        border-left-color: #f59e0b;
-      }
-
-      .toast[variant="info"] {
-        border-left-color: #3b82f6;
-      }
-
-      .toast[variant="default"] {
-        border-left-color: #6b7280;
       }
 
       .toast-content {
@@ -204,36 +205,54 @@ class Toast extends HTMLElement {
       }
 
       .progress-bar {
-        height: 3px;
-        background: #e5e7eb;
+        height: 4px;
+        background: #f3f4f6;
         position: relative;
         overflow: hidden;
+        border-radius: 0 0 8px 8px;
       }
 
       .progress-fill {
         height: 100%;
-        background: currentColor;
+        border-radius: 0 0 8px 8px;
         transition: width linear;
+        position: relative;
+      }
+
+      .progress-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
       }
 
       .progress-fill.success {
-        background: #10b981;
+        background: linear-gradient(90deg, #10b981, #059669);
       }
 
       .progress-fill.error {
-        background: #ef4444;
+        background: linear-gradient(90deg, #ef4444, #dc2626);
       }
 
       .progress-fill.warning {
-        background: #f59e0b;
+        background: linear-gradient(90deg, #f59e0b, #d97706);
       }
 
       .progress-fill.info {
-        background: #3b82f6;
+        background: linear-gradient(90deg, #3b82f6, #2563eb);
       }
 
       .progress-fill.default {
-        background: #6b7280;
+        background: linear-gradient(90deg, #6b7280, #4b5563);
       }
     `;
     this.shadowRoot.appendChild(style);
