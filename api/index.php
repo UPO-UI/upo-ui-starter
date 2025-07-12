@@ -1,12 +1,10 @@
 <?php
 // api/index.php - API entry point
 
-// Check if CLI mode and --migrate argument is provided
-if (php_sapi_name() === 'cli' && isset($argv[1]) && $argv[1] === '--migrate') {
-    require_once __DIR__ . '/database/connection.php';
-    require_once __DIR__ . '/core/Migrator.php';
-    Migrator::run();
-    exit();
+// Handle CLI commands
+if (php_sapi_name() === 'cli') {
+    require_once __DIR__ . '/core/CliHandler.php';
+    CliHandler::handle();
 }
 
 require_once __DIR__ . '/database/connection.php';

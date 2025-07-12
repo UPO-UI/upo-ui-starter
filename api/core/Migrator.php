@@ -1,8 +1,6 @@
 <?php
 // api/core/Migrator.php - Core migration runner: supports models and SQL files
 
-require_once __DIR__ . '/../database/connection.php'; // Loads env and PDO
-
 class Migrator {
     public static function run() {
         global $pdo;
@@ -172,6 +170,4 @@ class Migrator {
         echo "$message\n"; // Also echo to terminal
     }
 }
-
-// Run the migrator
 ?> 
