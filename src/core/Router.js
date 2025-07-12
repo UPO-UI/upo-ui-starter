@@ -222,7 +222,6 @@ class Router {
         for (const componentPath of possiblePaths) {
             try {
                 const module = await import(`@/${componentPath}`);
-                console.log(`✅ Auto-loaded: ${componentPath} → ${path}`);
                 
                 // Cache it for next time and extract params if dynamic
                 this.componentCache.set(path, module.default);
@@ -343,7 +342,6 @@ class Router {
                     const layoutModule = await import(layoutPath);
                     CustomLayoutClass = layoutModule.default;
                     customLayoutTagName = `app-${CustomLayoutClass.name.replace(/([A-Z])/g, '-$1').toLowerCase().replace(/^-/, '')}`;
-                    console.log(`✅ Using custom layout for /${routeGroup}/* routes.`);
                 } catch (e) {
                     // This is expected if no custom layout exists.
                 }

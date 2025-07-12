@@ -13,5 +13,4 @@ const importMap = {
 };
 
 // Inject import map inline during page load
-document.write(`<script type="importmap">${JSON.stringify(importMap, null, 4)}<\/script>`);
-console.log('✅ Import map loaded with @ aliases'); 
+document.write(`<script type="importmap">${JSON.stringify(importMap, null, 4)}<\/script>`); 
