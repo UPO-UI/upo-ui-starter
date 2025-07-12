@@ -1,10 +1,17 @@
 <?php
 // api/config/cors.php - CORS configuration
 
+// Load environment variables
+require_once __DIR__ . '/load_env.php';
+$env = loadEnv(__DIR__ . '/../../../.env');
+
+// Get client URL from environment, fallback to localhost
+$clientUrl = $env['CLIENT_URL'] ?? 'http://localhost:8000';
+
 return [
     // Allowed origins (domains that can access the API)
     'allowed_origins' => [
-        'http://localhost:8000',
+        $clientUrl,
         'http://localhost:3000',
         'http://127.0.0.1:8000',
         'http://127.0.0.1:3000',
@@ -44,6 +51,6 @@ return [
     'allow_credentials' => true,
     
     // Default origin if request origin is not in allowed list
-    'default_origin' => 'http://localhost:8000'
+    'default_origin' => $clientUrl
 ];
 ?> 
