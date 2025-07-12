@@ -1,4 +1,4 @@
-in<?php
+<?php
 // api/core/CorsHandler.php - CORS header handler
 
 class CorsHandler {
@@ -14,11 +14,19 @@ class CorsHandler {
     public function setHeaders() {
         $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
         
+        // If no origin (like cURL/Postman), allow it
+        if (empty($origin)) {
+            header("Access-Control-Allow-Origin: {$this->config['default_origin']}");
+        }
         // Check if origin is allowed
-        if (in_array($origin, $this->config['allowed_origins'])) {
+        elseif (in_array($origin, $this->config['allowed_origins'])) {
             header("Access-Control-Allow-Origin: $origin");
         } else {
-            header("Access-Control-Allow-Origin: {$this->config['default_origin']}");
+            // BLOCK unauthorized origins
+            header("Access-Control-Allow-Origin: null");
+            header('HTTP/1.1 403 Forbidden');
+            echo json_encode(['error' => 'CORS: Origin not allowed']);
+            exit();
         }
         
         // Set other CORS headers
