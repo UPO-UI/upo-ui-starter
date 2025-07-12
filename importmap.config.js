@@ -8,7 +8,9 @@ const importMap = {
         "@/components/": "/src/components/",
         "@/app/": "/src/app/",
         "@/services/": "/src/services/",
-        "@/assets/": "/src/assets/"
+        "@/utils/": "/src/utils/",
+        "@/assets/": "/src/assets/",
+        "@/hooks/": "/src/hooks/"
     }
 };
 
