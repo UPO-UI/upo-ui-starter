@@ -35,9 +35,69 @@ class CliHandler {
                 Migrator::run();
                 Seeder::run();
                 exit();
+                
+            case '--clear':
+                self::clearDatabase();
+                exit();
+                
+            case '--fresh':
+                self::freshDatabase();
+                exit();
         }
         
         return false; // Not a recognized CLI command
+    }
+    
+    private static function clearDatabase() {
+        global $pdo;
+        
+        echo "🗑️  Clearing database...\n";
+        
+        try {
+            // Get all table names
+            $tables = $pdo->query("SHOW TABLES")->fetchAll(PDO::FETCH_COLUMN);
+            
+            if (empty($tables)) {
+                echo "✅ Database is already empty\n";
+                return;
+            }
+            
+            // Disable foreign key checks
+            $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+            
+            // Drop all tables
+            foreach ($tables as $table) {
+                $pdo->exec("DROP TABLE IF EXISTS `$table`");
+                echo "🗑️  Dropped table: $table\n";
+            }
+            
+            // Re-enable foreign key checks
+            $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+            
+            echo "✅ Database cleared successfully!\n";
+            
+        } catch (Exception $e) {
+            echo "❌ Error clearing database: " . $e->getMessage() . "\n";
+        }
+    }
+    
+    private static function freshDatabase() {
+        echo "🔄 Creating fresh database...\n";
+        
+        // Clear first
+        self::clearDatabase();
+        
+        // Then migrate and seed
+        require_once __DIR__ . '/Migrator.php';
+        require_once __DIR__ . '/Seeder.php';
+        
+        echo "\n📦 Running migrations...\n";
+        Migrator::run();
+        
+        echo "\n🌱 Running seeders...\n";
+        Seeder::run();
+        
+        echo "\n✅ Fresh database created successfully!\n";
     }
 }
 ?> 
