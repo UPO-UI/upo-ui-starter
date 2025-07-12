@@ -6,6 +6,28 @@ require_once __DIR__ . '/../database/connection.php'; // Loads env and PDO
 class Migrator {
     public static function run() {
         global $pdo;
+        
+        // Check for command arguments
+        global $argv;
+        $command = isset($argv[2]) ? $argv[2] : 'migrate';
+        
+        switch ($command) {
+            case 'status':
+                self::status();
+                break;
+            case 'rollback':
+                $steps = isset($argv[3]) ? (int)$argv[3] : 1;
+                self::rollback($steps);
+                break;
+            case 'migrate':
+            default:
+                self::executeMigrations();
+                break;
+        }
+    }
+    
+    private static function executeMigrations() {
+        global $pdo;
 
         // Existing Step 1: Migrations tracking table
         try {
@@ -52,6 +74,67 @@ class Migrator {
         }
 
         // Existing model and SQL steps here (unchanged)...
+    }
+
+    public static function status() {
+        global $pdo;
+        
+        try {
+            // Check if migrations table exists
+            $pdo->exec('CREATE TABLE IF NOT EXISTS migrations (id INT AUTO_INCREMENT PRIMARY KEY, migration VARCHAR(255) UNIQUE, batch INT, executed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)');
+            
+            // Get all migration files
+            $migrationDir = __DIR__ . '/../database/migrations/';
+            $phpFiles = glob($migrationDir . '*_*.php');
+            usort($phpFiles, function($a, $b) { return strcmp(basename($a), basename($b)); });
+            
+            // Get executed migrations
+            $executedMigrations = $pdo->query('SELECT migration, batch, executed_at FROM migrations ORDER BY id')->fetchAll(PDO::FETCH_ASSOC);
+            $executedMigrationNames = array_column($executedMigrations, 'migration');
+            
+            echo "\n=== Migration Status ===\n";
+            echo str_pad("Migration", 50) . str_pad("Status", 15) . str_pad("Batch", 8) . "Executed At\n";
+            echo str_repeat("-", 100) . "\n";
+            
+            foreach ($phpFiles as $file) {
+                $migrationName = basename($file, '.php');
+                $status = in_array($migrationName, $executedMigrationNames) ? '✓ Ran' : '✗ Pending';
+                $batch = '';
+                $executedAt = '';
+                
+                if (in_array($migrationName, $executedMigrationNames)) {
+                    foreach ($executedMigrations as $executed) {
+                        if ($executed['migration'] === $migrationName) {
+                            $batch = $executed['batch'];
+                            $executedAt = $executed['executed_at'];
+                            break;
+                        }
+                    }
+                }
+                
+                echo str_pad($migrationName, 50) . 
+                     str_pad($status, 15) . 
+                     str_pad($batch, 8) . 
+                     $executedAt . "\n";
+            }
+            
+            // Summary
+            $totalMigrations = count($phpFiles);
+            $ranMigrations = count($executedMigrationNames);
+            $pendingMigrations = $totalMigrations - $ranMigrations;
+            
+            echo "\n=== Summary ===\n";
+            echo "Total migrations: $totalMigrations\n";
+            echo "Ran: $ranMigrations\n";
+            echo "Pending: $pendingMigrations\n";
+            
+            if ($pendingMigrations > 0) {
+                echo "\nTo run pending migrations: php index.php --migrate\n";
+            }
+            
+        } catch (Exception $e) {
+            echo "Error checking migration status: " . $e->getMessage() . "\n";
+        }
     }
 
     public static function rollback($steps = 1) {
